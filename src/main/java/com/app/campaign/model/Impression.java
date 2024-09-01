@@ -24,7 +24,5 @@ public class Impression {
     @Column(name = "campaign_id", nullable = false)
     private Long campaignId;
 
-    @OneToMany(mappedBy = "impression")
-    private List<Click> clicks;
 }
 

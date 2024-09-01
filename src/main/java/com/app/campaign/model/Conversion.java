@@ -22,7 +22,6 @@ import lombok.NoArgsConstructor;
 public class Conversion {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "conversion_id", nullable = false)
     private Long conversionId;
 
@@ -32,7 +31,4 @@ public class Conversion {
     @Column(name = "revenue", nullable = false)
     private Double revenue;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "click_id", referencedColumnName = "click_id", insertable = false, updatable = false)
-    private Click click;
 }
