@@ -4,7 +4,7 @@ CREATE VIEW banner_campaign_summary_view AS
 SELECT
     i.banner_id,
     i.campaign_id,
-    COUNT(c.click_id) AS click_count,
+    COUNT(distinct(c.click_id)) AS click_count,
     COUNT(conv.conversion_id) AS conversion_count,
     COALESCE(SUM(conv.revenue), 0) AS total_revenue
 FROM
