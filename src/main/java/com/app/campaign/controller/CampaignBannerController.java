@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Optional;
 
 @RestController
-
+@CrossOrigin(origins = "*") // Allow requests from any origin
 public class CampaignBannerController {
 
     @Autowired

@@ -35,6 +35,8 @@ public class CsvDataLoader {
     @Autowired
     private ConversionRepository conversionRepository;
 
+    private static final String path="src/main/resources/dataset/4/";
+
     // To keep track of valid click IDs
     private Set<Long> validClickIds = new HashSet<>();
 
@@ -50,7 +52,7 @@ public class CsvDataLoader {
     }
 
     private void loadImpressions() throws CsvValidationException, IOException {
-        String filePath = "src/main/resources/dataset/csv/1/impressions_1.csv"; // Update path as necessary
+        String filePath = path+"impressions_4.csv"; // Update path as necessary
         try (CSVReader reader = new CSVReader(new FileReader(filePath))) {
             List<Impression> impressions = new ArrayList<>();
             String[] line;
@@ -79,7 +81,7 @@ public class CsvDataLoader {
     }
 
     private void loadClicks() throws CsvValidationException, IOException {
-        String filePath = "src/main/resources/dataset/csv/1/clicks_1.csv"; // Update path as necessary
+        String filePath = path+"clicks_4.csv"; // Update path as necessary
         try (CSVReader reader = new CSVReader(new FileReader(filePath))) {
             List<Click> clicks = new ArrayList<>();
             String[] line;
@@ -111,7 +113,7 @@ public class CsvDataLoader {
     }
 
     private void loadConversions() throws CsvValidationException, IOException {
-        String filePath = "src/main/resources/dataset/csv/1/conversions_1.csv"; // Update path as necessary
+        String filePath = path+"conversions_4.csv"; // Update path as necessary
         try (CSVReader reader = new CSVReader(new FileReader(filePath))) {
             List<Conversion> conversions = new ArrayList<>();
             String[] line;
