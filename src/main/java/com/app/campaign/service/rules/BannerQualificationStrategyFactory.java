@@ -1,4 +1,5 @@
-package com.app.campaign.service;
+package com.app.campaign.service.rules;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

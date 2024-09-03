@@ -1,4 +1,4 @@
-package com.app.campaign.service;
+package com.app.campaign.service.rules;
 import com.app.campaign.view.BannerCampaignSummaryView;
 
 import java.util.List;

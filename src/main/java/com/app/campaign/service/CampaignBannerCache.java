@@ -9,20 +9,49 @@ import java.util.stream.Collectors;
 @Component
 public class CampaignBannerCache {
 
-    // Cache to store campaign_id -> set of banner_id
-    private final Map<Long, Set<Long>> campaignBannersCache = new ConcurrentHashMap<>();
+    private  Map<Long, Set<Long>> activeCache;
+    private  Map<Long, Set<Long>> stagedCache;
+    private  Map<String, Long> userLastShownBanner=new ConcurrentHashMap<>();
 
-    // Map to track the last shown banner_id for each user
-    private final Map<String, Long> userLastShownBanner = new ConcurrentHashMap<>();
+    public Map<Long, Set<Long>> getActiveCache() {
+        return activeCache;
+    }
 
-    // Load banners into the cache
-    public void loadBanners(Long campaignId, Set<Long> bannerIds) {
-        campaignBannersCache.put(campaignId, new HashSet<>(bannerIds));
+    public void setActiveCache(Map<Long, Set<Long>> activeCache) {
+        this.activeCache = activeCache;
+    }
+
+    public Map<Long, Set<Long>> getStagedCache() {
+        return stagedCache;
+    }
+
+    public void setStagedCache(Map<Long, Set<Long>> stagedCache) {
+        this.stagedCache = stagedCache;
+    }
+
+    public Map<String, Long> getUserLastShownBanner() {
+        return userLastShownBanner;
+    }
+
+    public void loadBanners(Long campaignId, Set<Long> bannerIds, boolean toActiveCache) {
+        if (toActiveCache) {
+            activeCache.put(campaignId, bannerIds);
+        } else {
+            stagedCache.put(campaignId, bannerIds);
+        }
+    }
+
+    // Method to switch staged cache to active cache
+    public void switchActiveAndStaged() {
+        activeCache.clear();
+        activeCache.putAll(stagedCache);
+        stagedCache.clear();
+        System.out.println("Switched staged cache to active cache.");
     }
 
     // Get a random banner_id for a user ensuring it's not the last shown one
     public Optional<Long> getRandomBannerForUser(Long campaignId, String userId) {
-        Set<Long> banners = campaignBannersCache.getOrDefault(campaignId, Collections.emptySet());
+        Set<Long> banners = getActiveCache().getOrDefault(campaignId, Collections.emptySet());
 
         // Return empty if no banners are available
         if (banners.isEmpty()) {
@@ -50,4 +79,5 @@ public class CampaignBannerCache {
 
         return Optional.of(selectedBanner);
     }
+
 }

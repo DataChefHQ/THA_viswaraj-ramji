@@ -1,19 +1,12 @@
-package com.app.campaign.model;
-
+package com.app.campaign.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -31,4 +24,6 @@ public class Conversion {
     @Column(name = "revenue", nullable = false)
     private Double revenue;
 
+    @Column(name = "timestamp", nullable = false)
+    private LocalDateTime timestamp;  // Timestamp field to track when data is loaded
 }

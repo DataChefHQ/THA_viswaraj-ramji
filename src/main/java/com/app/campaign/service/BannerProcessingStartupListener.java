@@ -13,9 +13,8 @@ public class BannerProcessingStartupListener implements ApplicationListener<Cont
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
-        // Perform processing before application is ready to accept requests
         System.out.println("Starting banner processing before application is ready to accept requests...");
-        bannerProcessingService.processBanners();
+        bannerProcessingService.processBannersAtStartup();
         System.out.println("Banner processing completed.");
     }
 }

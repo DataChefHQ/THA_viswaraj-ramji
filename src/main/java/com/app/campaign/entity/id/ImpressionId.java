@@ -1,4 +1,4 @@
-package com.app.campaign.model.idmodel;
+package com.app.campaign.entity.id;
 
 import jakarta.persistence.Column;
 import java.io.Serializable;

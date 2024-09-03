@@ -1,5 +1,4 @@
-package com.app.campaign.service;
-
+package com.app.campaign.service.rules;
 import com.app.campaign.view.BannerCampaignSummaryView;
 import org.springframework.stereotype.Component;
 
@@ -20,12 +19,12 @@ public class TopXRevenueWithMostClicksStrategy implements BannerQualificationStr
         List<Long> topRevenueBanners = banners.stream()
                 .sorted((b1, b2) -> Double.compare(b2.getTotalRevenue(), b1.getTotalRevenue()))
                 .limit(x)
-                .map(banner -> banner.getId().getBannerId()) // Map to bannerId
+                .map(banner -> banner.getBannerId())
                 .collect(Collectors.toList());
 
         List<Long> mostClicksBanners = banners.stream()
                 .sorted((b1, b2) -> Long.compare(b2.getClickCount(), b1.getClickCount()))
-                .map(banner -> banner.getId().getBannerId()) // Map to bannerId
+                .map(banner -> banner.getBannerId())
                 .filter(bannerId -> !topRevenueBanners.contains(bannerId))
                 .limit(5 - x)
                 .collect(Collectors.toList());

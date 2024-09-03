@@ -1,4 +1,5 @@
-package com.app.campaign.service;
+package com.app.campaign.service.rules;
+
 
 import com.app.campaign.view.BannerCampaignSummaryView;
 import org.springframework.stereotype.Component;
@@ -21,12 +22,12 @@ public class TopFiveClicksStrategy implements BannerQualificationStrategy {
         List<Long> topClicksBanners = banners.stream()
                 .sorted((b1, b2) -> Long.compare(b2.getClickCount(), b1.getClickCount()))
                 .limit(5)
-                .map(banner -> banner.getId().getBannerId()) // Map to bannerId
+                .map(banner -> banner.getBannerId())
                 .collect(Collectors.toList());
 
         if (topClicksBanners.size() < 5) {
             List<Long> remainingBanners = banners.stream()
-                    .map(banner -> banner.getId().getBannerId()) // Map to bannerId
+                    .map(banner -> banner.getBannerId())
                     .filter(bannerId -> !topClicksBanners.contains(bannerId))
                     .collect(Collectors.toList());
 

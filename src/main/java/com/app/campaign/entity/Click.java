@@ -1,11 +1,13 @@
-package com.app.campaign.model;
+package com.app.campaign.entity;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -23,4 +25,6 @@ public class Click {
     @Column(name = "campaign_id", nullable = false)
     private Long campaignId;
 
+    @Column(name = "timestamp", nullable = false)
+    private LocalDateTime timestamp;  // Timestamp field to track when data is loaded
 }
