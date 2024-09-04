@@ -53,7 +53,7 @@ public class CsvDataLoader {
                             // Load folder data with the current timestamp
                             loadFolderData(folderNumber, timestamp.get());
                             // Increment the timestamp by 15 minutes
-                            timestamp.set(timestamp.get().plusMinutes(15));
+                            timestamp.set(timestamp.get().plusMinutes(3));
                         } catch (NumberFormatException e) {
                             LOGGER.warning("Skipping invalid folder name: " + folderName);
                         }

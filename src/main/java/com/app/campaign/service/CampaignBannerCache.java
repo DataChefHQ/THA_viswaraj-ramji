@@ -43,9 +43,7 @@ public class CampaignBannerCache {
 
     // Method to switch staged cache to active cache
     public void switchActiveAndStaged() {
-        activeCache.clear();
-        activeCache.putAll(stagedCache);
-        stagedCache.clear();
+        activeCache=stagedCache;
         System.out.println("Switched staged cache to active cache.");
     }
 

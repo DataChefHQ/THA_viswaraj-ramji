@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -26,6 +27,7 @@ public class Impression {
     @Column(name = "campaign_id", nullable = false)
     private Long campaignId;
 
+    @Id  // Add @Id annotation here
     @Column(name = "timestamp", nullable = false)
     private LocalDateTime timestamp;  // Timestamp field to track when data is loaded
 }
