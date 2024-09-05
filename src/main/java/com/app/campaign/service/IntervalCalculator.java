@@ -10,13 +10,15 @@ public class IntervalCalculator {
      * @param timestamp the current timestamp
      * @return an array containing the start and end time of the 3-minute interval
      */
+    // Given a timestamp, calculate the rounded-off start date and end date with a 3-minute difference
     public static LocalDateTime[] getIntervalForQuery(LocalDateTime timestamp) {
-        LocalDateTime startOfHour = timestamp.truncatedTo(ChronoUnit.HOURS);
-        int minute = timestamp.getMinute();
-        int intervalStartMinute = (minute / 3) * 3;  // Calculate the start minute of the 3-minute interval
-        LocalDateTime startInterval = startOfHour.plusMinutes(intervalStartMinute);
-        LocalDateTime endInterval = startInterval.plusMinutes(2);  // End of the interval is 2 minutes after the start
+        // Round down the timestamp to the nearest 3-minute interval
+        LocalDateTime startDate = timestamp.truncatedTo(ChronoUnit.HOURS)
+                .plusMinutes((timestamp.getMinute() / 3) * 3);
 
-        return new LocalDateTime[]{startInterval, endInterval};
+        // End date is 3 minutes after the start date
+        LocalDateTime endDate = startDate.plusMinutes(3);
+
+        return new LocalDateTime[]{startDate, endDate};
     }
 }
