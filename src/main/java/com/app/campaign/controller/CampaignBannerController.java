@@ -26,7 +26,7 @@ public class CampaignBannerController {
     }
 
     // Endpoint to get a random banner for a given campaign_id and user_id
-    @GetMapping("/api/campaigns/{campaignId}")
+    @GetMapping("/campaigns/{campaignId}")
     public ResponseEntity<Void> getRandomBanner(
             @PathVariable Long campaignId,
             @RequestParam String userId) {

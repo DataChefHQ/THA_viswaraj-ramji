@@ -49,7 +49,7 @@ public class BannerProcessingService {
     }
 
     // Scheduled task to refresh caches every 3 minutes
-    @Scheduled(cron = "0 */3 * * * *")
+    @Scheduled(cron = "0 */15 * * * *")
     @Async("taskExecutor")
     public void refreshCaches() {
         logger.info("Scheduled cache refresh running at: {}", java.time.LocalTime.now());
@@ -63,7 +63,7 @@ public class BannerProcessingService {
         LocalDateTime startTime = currentInterval[0];
 
         cleanUpOldCacheEntries(startTime);
-        processNextInterval(localTimestamp.plusMinutes(3));
+        processNextInterval(localTimestamp.plusMinutes(15));
     }
 
     // Fetch active summaries within a given interval

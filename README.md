@@ -231,3 +231,11 @@ These steps will set up the Nginx server to serve banner images as needed by the
     - This command starts the application on port 9000, making it accessible at `http://localhost:9000`.
 
 These steps will help you set up and run the Maven application container, ensuring it has access to the necessary datasets and is configured correctly to serve requests on the specified port.
+
+
+### Sample Input 
+
+http://localhost:9000/campaigns/50?userId=10
+
+### Sample Output
+![img.png](img.png)

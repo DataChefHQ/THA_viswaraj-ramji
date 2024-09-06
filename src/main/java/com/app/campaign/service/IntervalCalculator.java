@@ -14,10 +14,10 @@ public class IntervalCalculator {
     public static LocalDateTime[] getIntervalForQuery(LocalDateTime timestamp) {
         // Round down the timestamp to the nearest 3-minute interval
         LocalDateTime startDate = timestamp.truncatedTo(ChronoUnit.HOURS)
-                .plusMinutes((timestamp.getMinute() / 3) * 3);
+                .plusMinutes((timestamp.getMinute() / 15) * 15);
 
         // End date is 3 minutes after the start date
-        LocalDateTime endDate = startDate.plusMinutes(3);
+        LocalDateTime endDate = startDate.plusMinutes(15);
 
         return new LocalDateTime[]{startDate, endDate};
     }
