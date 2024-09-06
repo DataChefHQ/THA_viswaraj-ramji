@@ -1,0 +1,9 @@
+docker build -t my-maven-app .
+
+docker run -d -p 9000:9000 -v /d/data/csv:/app/src/main/resources/dataset/csv --name demo-container my-maven-app
+
+
+//todo mount CSV files
+//create diagrams or docs
+//add loggers necessary
+//create vedio explaining solution
