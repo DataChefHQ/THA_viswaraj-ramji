@@ -156,7 +156,7 @@ graph TD
 
 ```mermaid
 graph TD
-    J1[User Makes API Call: /api/campaigns/{campaignId}?userId={userId}]
+    J1["User Makes API Call: /api/campaigns/{campaignId}?userId={userId}"]
     J1 --> J2[Fetch Banner ID from Precomputed Cache]
     J2 --> J3[Check User-Banner Map for Last Served Banner]
     J3 --> J4{Is Last Banner the Same?}
