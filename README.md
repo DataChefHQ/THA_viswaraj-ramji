@@ -150,14 +150,12 @@ graph TD
     subgraph View Creation
         G1[Create View: banner_campaign_summary_view]
         G2[View Columns: banner_id, campaign_id, click_count, conversion_count, total_revenue, timestamp]
-        G3[Use COALESCE to Handle Nulls in Counts and Revenue]
     end
 
     F1 --> G1
     F2 --> G1
     F3 --> G1
     G1 --> G2
-    G2 --> G3
 
     subgraph Precomputed Cache
         H1[Initial Cache Creation Using Relevant Timestamp Data]
@@ -166,7 +164,7 @@ graph TD
         H4[Serve Requests using Current Cache Data]
     end
 
-    G3 --> H1
+    G2 --> H1
     H1 --> H2
     H2 --> H3
     H3 --> H4
