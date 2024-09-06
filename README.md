@@ -202,6 +202,22 @@ graph TD
     J8 --> J9[Nginx Serves Banner File]
 ```
 
+### Visual Representation of the flow:
+
+|----t1(active)----||-----(t2)(staged)-----|
+
+t1(active) will serve all the users
+
+After 15 mins
+
+|----t1(deleted)----|-----(t2)(active)-----||-----(t3)(staged)-----|
+
+After 15+15 mins
+
+|----t1(deleted)----|-----(t2)(deleted)-----||-----(t3)(active)-----||-----(t3)(staged)-----|
+
+....
+
 ### Explanation of Diagrams
 
 - **Backend Data Processing Diagram**: Shows the flow of data import, indexing, view creation, cache management, and the scheduled cache update process using Quartz.
