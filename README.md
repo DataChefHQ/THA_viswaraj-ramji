@@ -214,7 +214,7 @@ After 15 mins
 
 After 15+15 mins
 
-|----t1(deleted)----|-----(t2)(deleted)-----||-----(t3)(active)-----||-----(t3)(staged)-----|
+|----t1(deleted)----|-----(t2)(deleted)-----||-----(t3)(active)-----||-----(t4)(staged)-----|
 
 ....
 
