@@ -236,6 +236,7 @@ These diagrams visually represent the system's data processing and user interact
 2. **Build the Nginx Docker Image:**
     - Run the following command to build the Docker image for Nginx:
       ```bash
+      cd nginx
       docker build -t my-nginx .
       ```
 
