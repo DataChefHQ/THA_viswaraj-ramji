@@ -58,24 +58,56 @@ After indexing, a database view named `banner_campaign_summary_view` is created 
 
 ```sql
 CREATE VIEW banner_campaign_summary_view AS
-SELECT 
+SELECT
     i.banner_id,
     i.campaign_id,
     COALESCE(click_details.click_count, 0) AS click_count,
     COALESCE(conversion_details.conversion_count, 0) AS conversion_count,
     COALESCE(conversion_details.total_revenue, 0) AS total_revenue,
     i.timestamp
-FROM impressions i
-LEFT JOIN (
-    SELECT banner_id, campaign_id, COUNT(*) AS click_count 
-    FROM clicks 
-    GROUP BY banner_id, campaign_id
-) AS click_details ON i.banner_id = click_details.banner_id AND i.campaign_id = click_details.campaign_id
-LEFT JOIN (
-    SELECT click_id, COUNT(*) AS conversion_count, SUM(revenue) AS total_revenue 
-    FROM conversions 
-    GROUP BY click_id
-) AS conversion_details ON click_details.click_id = conversion_details.click_id;
+FROM
+    impressions i
+LEFT JOIN
+    (
+        SELECT
+            banner_id,
+            campaign_id,
+            timestamp,
+            COUNT(DISTINCT click_id) AS click_count
+        FROM
+            clicks
+        GROUP BY
+            banner_id,
+            campaign_id,
+            timestamp
+    ) AS click_details
+    ON i.banner_id = click_details.banner_id
+    AND i.campaign_id = click_details.campaign_id
+    AND i.timestamp = click_details.timestamp
+LEFT JOIN
+    (
+        SELECT
+            c.banner_id,
+            c.campaign_id,
+            c.timestamp,
+            COUNT(conv.conversion_id) AS conversion_count,
+            SUM(conv.revenue) AS total_revenue
+        FROM
+            clicks c
+        LEFT JOIN
+            conversions conv ON c.click_id = conv.click_id
+        GROUP BY
+            c.banner_id,
+            c.campaign_id,
+            c.timestamp
+    ) AS conversion_details
+    ON i.banner_id = conversion_details.banner_id
+    AND i.campaign_id = conversion_details.campaign_id
+    AND i.timestamp = conversion_details.timestamp
+GROUP BY
+    i.banner_id,
+    i.campaign_id,
+    i.timestamp;
 ```
 
 ## Precomputed Cache Mechanism
