@@ -1,10 +1,13 @@
 package com.app.campaign.service;
+
 import com.app.campaign.repo.BannerCampaignSummaryViewRepository;
 import com.app.campaign.service.rules.BannerQualificationStrategy;
 import com.app.campaign.service.rules.BannerQualificationStrategyFactory;
 import com.app.campaign.view.BannerCampaignSummaryView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -20,78 +23,92 @@ import java.util.stream.Collectors;
 @Service
 public class BannerProcessingService {
 
-    @Autowired
-    private BannerCampaignSummaryViewRepository bannerCampaignSummaryViewRepository;
+    private static final Logger logger = LoggerFactory.getLogger(BannerProcessingService.class);
+
+    private final BannerCampaignSummaryViewRepository bannerCampaignSummaryViewRepository;
+    private final BannerQualificationStrategyFactory strategyFactory;
+    private final CampaignBannerCache campaignBannerCache;
 
     @Autowired
-    private BannerQualificationStrategyFactory strategyFactory;
+    public BannerProcessingService(BannerCampaignSummaryViewRepository bannerCampaignSummaryViewRepository,
+                                   BannerQualificationStrategyFactory strategyFactory,
+                                   CampaignBannerCache campaignBannerCache) {
+        this.bannerCampaignSummaryViewRepository = bannerCampaignSummaryViewRepository;
+        this.strategyFactory = strategyFactory;
+        this.campaignBannerCache = campaignBannerCache;
+    }
 
-    @Autowired
-    private CampaignBannerCache campaignBannerCache;
-
-
-    // Initial processing at startup
+    // Initial processing before the first request is served
+    @EventListener(ContextRefreshedEvent.class)
     public void processBannersAtStartup() {
-        System.out.println("On app Start");
+        logger.info("Processing banners at application startup.");
         LocalDateTime[] activeInterval = IntervalCalculator.getIntervalForQuery(LocalDateTime.now());
-        List<BannerCampaignSummaryView> activeSummaries = bannerCampaignSummaryViewRepository
-                .findByTimestampBetween(activeInterval[0], activeInterval[1]);
-        System.out.println("activeSummaries size:" + activeSummaries.size());
+        List<BannerCampaignSummaryView> activeSummaries = fetchActiveSummaries(activeInterval);
         processAndLoadToCache(activeSummaries, activeInterval[0]);
         processNextIntervalAsyncAfterCleanUp();
     }
 
-
-    // Scheduled to run every 3 minutes as per cron
+    // Scheduled task to refresh caches every 3 minutes
     @Scheduled(cron = "0 */3 * * * *")
     @Async("taskExecutor")
     public void refreshCaches() {
-            System.out.println("Scheduled task running at: " + java.time.LocalTime.now());
-            processNextIntervalAsyncAfterCleanUp();
+        logger.info("Scheduled cache refresh running at: {}", java.time.LocalTime.now());
+        processNextIntervalAsyncAfterCleanUp();
     }
 
-
-    // Async method to process the next interval (staged)
-
-    public void processNextIntervalAsyncAfterCleanUp() {
+    // Process the next interval asynchronously after cleaning up old entries
+    private void processNextIntervalAsyncAfterCleanUp() {
         LocalDateTime localTimestamp = LocalDateTime.now();
-
-        // Use IntervalCalculator to get the rounded interval for the current time
         LocalDateTime[] currentInterval = IntervalCalculator.getIntervalForQuery(localTimestamp);
-
-        // The start time is the beginning of the staged interval
         LocalDateTime startTime = currentInterval[0];
 
-        // Remove entries from the map that are before the start time
+        cleanUpOldCacheEntries(startTime);
+        processNextInterval(localTimestamp.plusMinutes(3));
+    }
+
+    // Fetch active summaries within a given interval
+    private List<BannerCampaignSummaryView> fetchActiveSummaries(LocalDateTime[] interval) {
+        List<BannerCampaignSummaryView> summaries = bannerCampaignSummaryViewRepository
+                .findByTimestampBetween(interval[0], interval[1]);
+        logger.info("Fetched {} active summaries.", summaries.size());
+        return summaries;
+    }
+
+    // Clean up old cache entries
+    private void cleanUpOldCacheEntries(LocalDateTime startTime) {
         Iterator<LocalDateTime> iterator = campaignBannerCache.getLocalCache().keySet().iterator();
         while (iterator.hasNext()) {
             LocalDateTime key = iterator.next();
             if (key.isBefore(startTime)) {
                 iterator.remove();
+                logger.debug("Removed cache entry for time: {}", key);
             }
         }
+    }
 
-        // Use the next interval (3 minutes later) for processing
-        LocalDateTime[] stagedInterval = IntervalCalculator.getIntervalForQuery(localTimestamp.plusMinutes(3));
+    // Process the next interval for banner qualification and caching
+    private void processNextInterval(LocalDateTime nextIntervalStartTime) {
+        LocalDateTime[] stagedInterval = IntervalCalculator.getIntervalForQuery(nextIntervalStartTime);
         List<BannerCampaignSummaryView> stagedSummaries = bannerCampaignSummaryViewRepository
                 .findByTimestampBetween(stagedInterval[0], stagedInterval[1]);
-        System.out.println("stagedSummaries size:" + stagedSummaries.size());
+        logger.info("Processing {} staged summaries.", stagedSummaries.size());
         processAndLoadToCache(stagedSummaries, stagedInterval[0]);
     }
 
+    // Process summaries and load qualified banners into cache
     private void processAndLoadToCache(List<BannerCampaignSummaryView> summaries, LocalDateTime localDateTime) {
         Map<Long, List<BannerCampaignSummaryView>> groupedByCampaignId = summaries.stream()
                 .collect(Collectors.groupingBy(BannerCampaignSummaryView::getCampaignId));
 
         groupedByCampaignId.forEach((campaignId, campaignBanners) -> {
-            long x = campaignBanners.stream()
+            long conversionCount = campaignBanners.stream()
                     .filter(banner -> banner.getConversionCount() > 0)
                     .count();
 
-            BannerQualificationStrategy strategy = strategyFactory.getStrategy(x);
-            Set<Long> qualifiedBanners = strategy.qualifyBanners(campaignBanners, x);
+            BannerQualificationStrategy strategy = strategyFactory.getStrategy(conversionCount);
+            Set<Long> qualifiedBanners = strategy.qualifyBanners(campaignBanners, conversionCount);
             campaignBannerCache.loadBanners(localDateTime, campaignId, qualifiedBanners);
-            System.out.println(localDateTime + " Qualified Banners for Campaign " + campaignId + ": " + qualifiedBanners);
+            logger.info("{} Qualified Banners for Campaign {}: {}", localDateTime, campaignId, qualifiedBanners);
         });
     }
 }
