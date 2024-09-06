@@ -160,23 +160,25 @@ graph TD
     subgraph Precomputed Cache
         H1[Initial Cache Creation Using Relevant Timestamp Data]
         H2[Query banner_campaign_summary_view for Current Timestamp]
-        H3[Server Waits for Cache to be Ready]
-        H4[Serve Requests using Current Cache Data]
+        H3[Perform Rule Executions with the data]
+        H4[Server Waits for Cache to be Ready]
+        H5[Serve Requests using Current Cache Data]
     end
 
     G2 --> H1
     H1 --> H2
     H2 --> H3
     H3 --> H4
+    H4 --> H5
 
     subgraph Scheduled Process with Quartz
         I1[Quartz Scheduler Triggers Every 15 Minutes]
         I2[Remove Outdated Cache Data]
-        I3[Compute Cache for Next Timestamp using banner_campaign_summary_view]
+        I3[Compute Cache for Next Timestamp using banner_campaign_summary_view and rules computation]
         I4[Keep Existing Cache Data for Current Requests]
     end
 
-    H4 --> I1
+    H5 --> I1
     I1 --> I2
     I1 --> I3
     I3 --> I4
