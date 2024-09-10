@@ -204,17 +204,17 @@ graph TD
 
 ### Visual Representation of the flow:
 
-|----t1(active)----||-----(t2)(staged)-----|
+|----t1(active)----||-----(t2)(staged)(Async)-----|
 
 t1(active) will serve all the users
 
 After 15 mins
 
-|----t1(deleted)----|-----(t2)(active)-----||-----(t3)(staged)-----|
+|----t1(deleted)----|-----(t2)(active)-----||-----(t3)(staged)(Async)-----|
 
 After 15+15 mins
 
-|----t1(deleted)----|-----(t2)(deleted)-----||-----(t3)(active)-----||-----(t4)(staged)-----|
+|----t1(deleted)----|-----(t2)(deleted)-----||-----(t3)(active)-----||-----(t4)(staged)(Async)-----|
 
 ....
 
