@@ -9,8 +9,8 @@ The system processes advertising data, including impressions, clicks, and conver
 
 ### Key Features
 
-1. **Iterative Data Imports**: Data is imported every 15 minutes, with all records in a single batch sharing the same timestamp.
-2. **Precomputed Cache**: The cache is initialized with the first two timestamp batches and updated every 15 minutes in the background to include the latest data while removing outdated entries.
+1. **Iterative Data Imports**: Data is imported Iteratively with 15 minutes increment, with all records in a single batch sharing the same timestamp.
+2. **Precomputed Cache**: The cache is initialized with the first two timestamp batches and updated every 15 minutes in the background to include the latest data while removing outdated entries.(see ### Visual Representation of the flow : section for more details).
 3. **Database Indexing**: Specific indexes are used to optimize querying performance, making the system efficient in handling high volumes of requests.
 4. **User-Banner Mapping**: To avoid showing the same banner to users consecutively, a mapping of `userId` to `lastBannerId` is maintained and updated with each served request.
 
@@ -24,7 +24,7 @@ The system processes three primary data entities, each imported from a CSV file:
 
 2. **Clicks (`clicks.csv`)**:
     - **Columns**: `click_id`, `banner_id`, `campaign_id`, `timestamp`
-    - Represents clicks on banners linked to campaigns.
+    - Represents clicks on banners linked to campaigns
 
 3. **Conversions (`conversions.csv`)**:
     - **Columns**: `conversion_id`, `click_id`, `revenue`, `timestamp`
@@ -38,6 +38,7 @@ The system processes three primary data entities, each imported from a CSV file:
     - First import timestamp: `current`
     - Next import timestamp: `current + 15m`
     - Following import timestamp: `new current + 15m`
+- But all imports happens when the applications starts just the timestamp changes for each data with 15 mins increment.
 
 ## Database Indexing
 
@@ -132,7 +133,7 @@ The system utilizes a precomputed cache to ensure efficient request handling:
 
 ```mermaid
 graph TD
-    A[Start] --> B[Data Import every 15 minutes]
+    A[Start] --> B[Data Import with 15 minutes increment for each dataset.]
     B --> C[Load Impressions, Clicks, Conversions Data]
     C --> D[Assign Timestamp to Data Batch]
     D --> E[Store Data with Timestamp]
@@ -172,7 +173,7 @@ graph TD
     H4 --> H5
 
     subgraph Scheduled Process with Quartz
-        I1[Quartz Scheduler Triggers Every 15 Minutes]
+        I1[Scheduler Triggers Every 15 Minutes(can be achieved with TTL in redis)]
         I2[Remove Outdated Cache Data]
         I3[Compute Cache for Next Timestamp using banner_campaign_summary_view and rules computation]
         I4[Keep Existing Cache Data for Current Requests]
@@ -228,7 +229,7 @@ These diagrams visually represent the system's data processing and user interact
 
 ## Steps to Run the Application
 
-### Building and Running the Nginx Container to Serve Banner Images
+### Building and Running the Nginx Container to Serve Banner Images - Can be a similar behaviour to AWS S3
 
 1. **Navigate to the Nginx Folder in the Application Git Repository:**
     - Use your terminal or command line to navigate to the folder where the Nginx Dockerfile is located within your application's repository.
