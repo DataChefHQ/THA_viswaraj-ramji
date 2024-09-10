@@ -173,7 +173,7 @@ graph TD
     H4 --> H5
 
     subgraph Scheduled Process with Quartz
-        I1[Scheduler Triggers Every 15 Minutes(can be achieved with TTL in redis)]
+        I1[Scheduler Triggers Every 15 Minutes - can be achieved with TTL in redis]
         I2[Remove Outdated Cache Data]
         I3[Compute Cache for Next Timestamp using banner_campaign_summary_view and rules computation]
         I4[Keep Existing Cache Data for Current Requests]
