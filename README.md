@@ -219,6 +219,11 @@ After 15+15 mins
 
 ....
 
+### Example Flow:
+
+![image](https://github.com/user-attachments/assets/df326d55-0714-430c-af46-371fe19c7ae1)
+
+
 ### Explanation of Diagrams
 
 - **Backend Data Processing Diagram**: Shows the flow of data import, indexing, view creation, cache management, and the scheduled cache update process using Quartz.
